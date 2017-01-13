@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:paddingBottom="24dp"
+    android:background="@drawable/dialog_layout_outline" >
+    
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_notify"
+        android:textColor="@color/settings_text_color"
+        android:text="确定要加密并上传文件？"
+        android:textSize="19sp"
+        android:layout_marginTop="32dp"
+        android:layout_marginLeft="20dp"/>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/input_layout"
+        android:layout_below="@id/tv_notify"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:layout_marginLeft="20dp">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="53dp"
+            android:id="@+id/sq_layout"
+            android:background="@drawable/chanel_info_bg"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:visibility="gone">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sq_tv"
+                android:textColor="@color/settings_text_color" 
+                android:textSize="25sp"
+                android:text="pwd:"
+                android:layout_marginLeft="10dp"
+                />
+            <EditText 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:textColor="@color/settings_text_color" 
+                android:textSize="25sp"
+                android:id="@+id/sq_et"
+                android:digits="0123456789"
+                android:inputType="numberSigned"
+                />
+        </LinearLayout>
+        
+     </LinearLayout>   
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/input_layout">
+        
+        <Button 
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/btn_save"
+            android:background="@drawable/btn_save_bg"
+            android:textColor="@color/white"
+            android:text="确定"
+            />
+   <!--
+-->     
+        <Button 
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/btn_cancel"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_save_bg"
+            android:textColor="@color/white"
+            android:text="取消"/>
+   </LinearLayout>
+</RelativeLayout>

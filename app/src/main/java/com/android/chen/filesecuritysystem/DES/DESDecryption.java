@@ -16,13 +16,14 @@ public class DESDecryption {
     private byte[] mCiphertext;
     private byte[] mKey;
 
-    private byte[] decrypt(byte[] ciphertext, byte[] key) throws Exception {
-        mCiphertext = ciphertext;
-        mKey = key;
+//    private byte[] decrypt(byte[] ciphertext, byte[] key) throws Exception {
+    public static byte[] decrypt(byte[] ciphertext, byte[] key) throws Exception {
+//        mCiphertext = ciphertext;
+//        mKey = key;
 
         SecureRandom secureRandom = new SecureRandom();
 
-        DESKeySpec desKeySpec = new DESKeySpec(mKey);
+        DESKeySpec desKeySpec = new DESKeySpec(key);
 
         SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("DES");
         SecretKey secretKey = secretKeyFactory.generateSecret(desKeySpec);
@@ -30,7 +31,7 @@ public class DESDecryption {
         Cipher cipher = Cipher.getInstance("DES");
         cipher.init(Cipher.DECRYPT_MODE, secretKey, secureRandom);
 
-        return cipher.doFinal(mCiphertext);
+        return cipher.doFinal(ciphertext);
     }
 
 }
