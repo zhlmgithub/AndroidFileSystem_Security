@@ -2,8 +2,11 @@ package com.android.chen.filesecuritysystem;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +27,6 @@ import com.android.chen.filesecuritysystem.Bean.FileItem;
 import com.android.chen.filesecuritysystem.Callback.ItemClickCallback;
 import com.android.chen.filesecuritysystem.Tools.FilePathHeap;
 
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,10 +51,30 @@ public class MainActivity extends Activity {
     private Button mIPPositiveBtn ;
     private Button mIPNegativeBtn ;
 
+    private ProgressDialog mPDialog = null;
+
     ItemClickCallback itemClickCallback = new ItemClickCallback() {
         @Override
         public void updateView(String path) {
             showFileDir(path);
+        }
+    };
+
+    private static final int MSG_SHOW_PROGRESSDIALOG = 1;
+    private static final int MSG_CANCEL_PROGRESSDIALOG = 2;
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case MSG_SHOW_PROGRESSDIALOG:
+                    mPDialog = ProgressDialog.show(MainActivity.this,"","正在加载文件，请稍后...");
+                    break;
+                case MSG_CANCEL_PROGRESSDIALOG:
+                    if(mPDialog != null){
+                        mPDialog.cancel();
+                    }
+            }
         }
     };
 
@@ -84,7 +106,7 @@ public class MainActivity extends Activity {
         rvFileList.setNestedScrollingEnabled(false);
     }
 
-    private void showFileDir(String path) {
+    /*private void showFileDir(String path) {
         File file = new File(path);
         File[] files = file.listFiles();
         FileItem fileItem;
@@ -92,9 +114,9 @@ public class MainActivity extends Activity {
         String filePath;
         File typeFile;
         fileItems = new ArrayList<>();
-        /**
-         * 增加第一个返回上个路径的item
-         */
+
+        //增加第一个返回上个路径的item
+
         addFirstItem();
         if (files != null) {
             for (File file1 : files) {
@@ -119,6 +141,62 @@ public class MainActivity extends Activity {
         }
         mAdapter = new FileListAdapter(MainActivity.this, fileItems, itemClickCallback);
         rvFileList.setAdapter(mAdapter);
+    }*/
+
+    private void showFileDir(String path) {
+        final File file = new File(path);
+        final File[] files = file.listFiles();
+        FileItem fileItem;
+        String fileName;
+        String filePath;
+        File typeFile;
+        fileItems = new ArrayList<>();
+
+        //增加第一个返回上个路径的item
+
+        addFirstItem();
+        if (files != null) {
+            if(files.length > 0){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(files.length > 500){
+                            mHandler.sendEmptyMessage(MSG_SHOW_PROGRESSDIALOG);
+                        }
+                        for (File file1 : files) {
+                            FileItem fileItem = new FileItem();
+                            String fileName = file1.getName();
+                            String filePath = file1.getAbsolutePath();
+                            fileItem.setFileName(fileName);
+                            fileItem.setFilePath(filePath);
+                            File typeFile = new File(filePath);
+                            if (!typeFile.isDirectory()) {
+                                fileItem.setType(FileItem.TYPE_FILE_DECRYPT);
+                                if (fileName.length() > 7) {
+                                    if (fileName.substring(fileName.length() - 7).equalsIgnoreCase(".cipher")) {
+                                        fileItem.setType(FileItem.TYPE_FILE_ENCRYPTED);
+                                    }
+                                }
+                            } else {
+                                fileItem.setType(FileItem.TYPE_DIRECTPRY);
+                            }
+                            fileItems.add(fileItem);
+                        }
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter = new FileListAdapter(MainActivity.this, fileItems, itemClickCallback);
+                                rvFileList.setAdapter(mAdapter);
+                                mHandler.sendEmptyMessage(MSG_CANCEL_PROGRESSDIALOG);
+                            }
+                        },10);
+                    }
+                }).start();
+
+            }
+        }
+        //mAdapter = new FileListAdapter(MainActivity.this, fileItems, itemClickCallback);
+        //rvFileList.setAdapter(mAdapter);
     }
 
 
